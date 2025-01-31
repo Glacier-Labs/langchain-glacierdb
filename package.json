@@ -33,7 +33,9 @@
   "author": "LangChain",
   "license": "MIT",
   "dependencies": {
-    "@langchain/core": "~0.1.2"
+    "@glacier-network/client": "^0.2.1",
+    "@langchain/core": "~0.1.2",
+    "@langchain/openai": "~0.4.2"
   },
   "devDependencies": {
     "@jest/globals": "^29.5.0",
