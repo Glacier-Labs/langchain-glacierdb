@@ -121,6 +121,4 @@ export class GlacierVectorStore extends VectorStore {
   private generateId(): string {
     return Math.random().toString(36);
   }
-
-
 }
