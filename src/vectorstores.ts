@@ -29,10 +29,13 @@ export class GlacierVectorStore extends VectorStore {
     return "langchain-glacierdb";
   }
 
-  constructor(embeddings: EmbeddingsInterface, params: VectorstoreIntegrationParams) {
+  constructor(
+    embeddings: EmbeddingsInterface,
+    params: VectorstoreIntegrationParams
+  ) {
     super(embeddings, params);
     this.embeddings = embeddings;
-    this.collection = params.collection
+    this.collection = params.collection;
   }
 
   /**
@@ -61,7 +64,9 @@ export class GlacierVectorStore extends VectorStore {
     options?: { ids?: string[] } | string[]
   ) {
     const now = Date.now();
-    const ids = (Array.isArray(options) ? options : options?.ids) || documents.map(() => this.generateId());
+    const ids =
+      (Array.isArray(options) ? options : options?.ids) ||
+      documents.map(() => this.generateId());
     const records = vectors.map((vector, index) => ({
       id: ids[index],
       vector,
@@ -70,12 +75,11 @@ export class GlacierVectorStore extends VectorStore {
       createdAt: now,
       updatedAt: now,
     }));
-  
+
     for (const record of records) {
       await this.collection.insertOne(record);
     }
   }
-
 
   /**
    * Method to perform a similarity search over the vectorstore and return
@@ -86,12 +90,15 @@ export class GlacierVectorStore extends VectorStore {
     k: number,
     filter?: object
   ): Promise<[Document, number][]> {
-    const docs = await this.collection.find({
-      numCandidates: 10 * k,
-      vectorPath: 'vector',
-      queryVector: query,
-      filter,
-    }).limit(k).toArray();
+    const docs = await this.collection
+      .find({
+        numCandidates: 10 * k,
+        vectorPath: "vector",
+        queryVector: query,
+        filter,
+      })
+      .limit(k)
+      .toArray();
 
     return docs.map((result: SearchResult) => [
       new Document({

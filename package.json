@@ -1,6 +1,6 @@
 {
-  "name": "langchain-glacierdb",
-  "version": "0.0.0",
+  "name": "@glacier-network/langchain-glacierdb",
+  "version": "0.0.1",
   "description": "Sample integration for LangChain.js",
   "type": "module",
   "engines": {
@@ -10,7 +10,7 @@
   "types": "./index.d.ts",
   "repository": {
     "type": "git",
-    "url": "git@github.com:langchain-ai/langchainjs.git"
+    "url": "git@github.com:Glacier-Labs/langchain-glacierdb.git"
   },
   "scripts": {
     "build": "yarn clean && yarn build:esm && yarn build:cjs && yarn build:scripts",
@@ -30,7 +30,7 @@
     "format": "prettier --write \"src\"",
     "format:check": "prettier --check \"src\""
   },
-  "author": "LangChain",
+  "author": "glacier-network",
   "license": "MIT",
   "dependencies": {
     "@glacier-network/client": "^0.2.1",
