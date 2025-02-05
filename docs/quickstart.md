@@ -210,4 +210,4 @@ generation (RAG), see the following sections:
 ## Reference
 
 For detailed documentation of all `GlacierVectorStore` features
-and configurations head to the [Glacier VectorDB Demo](https://github.com/Glacier-Labs/langchain-glacierdb/blob/main/src/tests/vectorstores.test.ts).
+and configurations head to the [Glacier VectorDB Demo](https://github.com/Glacier-Labs/langchain-glacierdb/blob/main/src/tests/vectorstores.int.test.ts).
