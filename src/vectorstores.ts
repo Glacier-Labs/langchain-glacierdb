@@ -1,25 +1,41 @@
-import { Embeddings } from "@langchain/core/embeddings";
+import { EmbeddingsInterface } from "@langchain/core/embeddings";
 import { VectorStore } from "@langchain/core/vectorstores";
 import { Document } from "@langchain/core/documents";
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 /**
  * Database config for your vectorstore.
  */
-export interface VectorstoreIntegrationParams {}
+export interface VectorstoreIntegrationParams {
+  collection: any; // GlacierDB's Collection Instance
+}
+
+interface SearchResult {
+  document: string;
+  metadata: Record<string, any>;
+  score: number;
+}
 
 /**
  * Class for managing and operating vector search applications with
- * Tigris, an open-source Serverless NoSQL Database and Search Platform.
+ * GlacierDB, a vector search database.
  */
-export class VectorstoreIntegration extends VectorStore {
+export class GlacierVectorStore extends VectorStore {
+  private collection: any;
+
   // Replace
   _vectorstoreType(): string {
-    return "vectorstore_integration";
+    return "langchain-glacierdb";
   }
 
-  constructor(embeddings: Embeddings, params: VectorstoreIntegrationParams) {
+  constructor(
+    embeddings: EmbeddingsInterface,
+    params: VectorstoreIntegrationParams
+  ) {
     super(embeddings, params);
     this.embeddings = embeddings;
+    this.collection = params.collection;
   }
 
   /**
@@ -43,11 +59,26 @@ export class VectorstoreIntegration extends VectorStore {
    * Method to add raw vectors to the vectorstore.
    */
   async addVectors(
-    _vectors: number[][],
-    _documents: Document[],
-    _options?: { ids?: string[] } | string[]
+    vectors: number[][],
+    documents: Document[],
+    options?: { ids?: string[] } | string[]
   ) {
-    throw new Error("Not implemented.");
+    const now = Date.now();
+    const ids =
+      (Array.isArray(options) ? options : options?.ids) ||
+      documents.map(() => this.generateId());
+    const records = vectors.map((vector, index) => ({
+      id: ids[index],
+      vector,
+      document: documents[index].pageContent,
+      metadata: documents[index].metadata,
+      createdAt: now,
+      updatedAt: now,
+    }));
+
+    for (const record of records) {
+      await this.collection.insertOne(record);
+    }
   }
 
   /**
@@ -55,11 +86,27 @@ export class VectorstoreIntegration extends VectorStore {
    * the k most similar vectors along with their similarity scores.
    */
   async similaritySearchVectorWithScore(
-    _query: number[],
-    _k: number,
-    _filter?: object
+    query: number[],
+    k: number,
+    filter?: object
   ): Promise<[Document, number][]> {
-    throw new Error("Not implemented.");
+    const docs = await this.collection
+      .find({
+        numCandidates: 10 * k,
+        vectorPath: "vector",
+        queryVector: query,
+        filter,
+      })
+      .limit(k)
+      .toArray();
+
+    return docs.map((result: SearchResult) => [
+      new Document({
+        pageContent: result.document,
+        metadata: result.metadata,
+      }),
+      result.score,
+    ]);
   }
 
   /**
@@ -70,11 +117,15 @@ export class VectorstoreIntegration extends VectorStore {
    */
   static async fromDocuments(
     docs: Document[],
-    embeddings: Embeddings,
+    embeddings: EmbeddingsInterface,
     dbConfig: VectorstoreIntegrationParams
-  ): Promise<VectorstoreIntegration> {
+  ): Promise<GlacierVectorStore> {
     const instance = new this(embeddings, dbConfig);
     await instance.addDocuments(docs);
     return instance;
+  }
+
+  private generateId(): string {
+    return Math.random().toString(36);
   }
 }
