@@ -94,24 +94,24 @@ async function main() {
     }
   );
 
-  // await vectorStore.addDocuments([
-  //   {
-  //     pageContent: "Dogs are tough.",
-  //     metadata: { a: 1, created_at: new Date().toISOString() },
-  //   },
-  //   {
-  //     pageContent: "Cats have fluff.",
-  //     metadata: { b: 1, created_at: new Date().toISOString() },
-  //   },
-  //   {
-  //     pageContent: "What is a sandwich?",
-  //     metadata: { c: 1, created_at: new Date().toISOString() },
-  //   },
-  //   {
-  //     pageContent: "That fence is purple.",
-  //     metadata: { d: 1, e: 2, created_at: new Date().toISOString() },
-  //   },
-  // ]);
+  await vectorStore.addDocuments([
+    {
+      pageContent: "Dogs are tough.",
+      metadata: { a: 1, created_at: new Date().toISOString() },
+    },
+    {
+      pageContent: "Cats have fluff.",
+      metadata: { b: 1, created_at: new Date().toISOString() },
+    },
+    {
+      pageContent: "What is a sandwich?",
+      metadata: { c: 1, created_at: new Date().toISOString() },
+    },
+    {
+      pageContent: "That fence is purple.",
+      metadata: { d: 1, e: 2, created_at: new Date().toISOString() },
+    },
+  ]);
 
   await setTimeout(5000);
   const results: Document[] = await vectorStore.similaritySearch("Sandwich", 1);
