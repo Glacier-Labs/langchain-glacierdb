@@ -34,7 +34,7 @@
   "license": "MIT",
   "dependencies": {
     "@glacier-network/client": "^0.2.1",
-    "@langchain/core": "~0.1.2",
+    "@langchain/core": "~1.1.26",
     "@langchain/openai": "~0.4.2"
   },
   "devDependencies": {
